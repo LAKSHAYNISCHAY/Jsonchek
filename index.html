@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Check Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        .input-group input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .input-group button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .input-group button:hover {
+            background-color: #0056b3;
+        }
+        .progress-container {
+            margin: 20px 0;
+        }
+        .progress-bar {
+            height: 10px;
+            background-color: #007bff;
+            border-radius: 4px;
+            width: 0;
+            transition: width 0.4s ease;
+        }
+        .result-box {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            background-color: #fff;
+            color: #333;
+            overflow: auto;
+            max-height: 300px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            margin-top: 20px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        .status-message {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JSON Check Tool</h1>
+        <div class="input-group">
+            <label for="jsonUrl">Enter JSON URL:</label>
+            <input type="text" id="jsonUrl" placeholder="Paste JSON URL here">
+            <button onclick="checkJson()">Check JSON</button>
+        </div>
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <div id="resultBox" class="result-box">
+            <div id="statusMessage" class="status-message"></div>
+            <div id="jsonContent"></div>
+        </div>
+    </div>
+
+    <script>
+        function checkJson() {
+            const url = document.getElementById('jsonUrl').value;
+            const progressBar = document.getElementById('progressBar');
+            const resultBox = document.getElementById('resultBox');
+            const statusMessage = document.getElementById('statusMessage');
+            const jsonContent = document.getElementById('jsonContent');
+
+            statusMessage.textContent = ''; // Clear previous status
+            jsonContent.textContent = ''; // Clear previous JSON content
+            progressBar.style.width = '0'; // Reset progress bar
+
+            if (!url) {
+                statusMessage.textContent = 'Please enter a URL.';
+                statusMessage.classList.add('error');
+                return;
+            }
+
+            progressBar.style.width = '50%'; // Simulate progress
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    setTimeout(() => {
+                        progressBar.style.width = '100%'; // Complete progress bar
+                        statusMessage.textContent = 'JSON is correctly formatted!';
+                        statusMessage.classList.remove('error');
+                        statusMessage.classList.add('success');
+                        jsonContent.textContent = JSON.stringify(data, null, 2); // Display JSON
+                    }, 500); // Simulate processing delay
+                })
+                .catch(error => {
+                    progressBar.style.width = '100%'; // Complete progress bar
+                    statusMessage.textContent = 'Error fetching or parsing JSON: ' + error.message;
+                    statusMessage.classList.add('error');
+                });
+        }
+    </script>
+</body>
+</html>
